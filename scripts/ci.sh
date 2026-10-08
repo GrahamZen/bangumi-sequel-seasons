@@ -4,19 +4,21 @@
 #
 # 用法: scripts/ci.sh <步骤>...
 #   plan      看要不要重出: Bangumi 导出换了, 或 izuko-tv 的判据版本 (SEQUEL_SEASON_RULES) 变了; 输出 due=0/1.
+#             系列关系图只看导出: 换了就输出 due_graph=1.
 #             只取两个小文件 (导出的 latest.json 与 izuko-tv 的 SequelSeasons.kt), 不下导出、不构建
 #   download  取 Bangumi 最新导出 (同名的已下载过就跳过)
 #   prepare   从导出取出出表器的输入 (scripts/prepare.py)
+#   graph     写系列关系图 bgm-series-graph.tsv (scripts/graph.py, 不用 izuko-tv)
 #   izuko     取 izuko-tv (IZUKO_REF), 拷入出表器
 #   jdk       装带 JCEF 的 JBR (版本写死在下面, 从 JetBrains 的 CDN 取并校验, 不经 GitHub API); 已装就跳过
 #   build     构建并运行出表器, 写 bgm-sequel-seasons.tsv
-#   local     本地验证: download prepare izuko jdk build 依次跑 (不看 plan), 不提交
+#   local     本地验证: download prepare graph izuko jdk build 依次跑 (不看 plan), 不提交
 #
 # 环境变量:
 #   WORK       工作目录; 默认 $RUNNER_TEMP/work, 本地为仓库下的 .work
 #   IZUKO_REF  用 izuko-tv 的哪个分支/标签 (默认 main)
 #   IZUKO_REPO 从哪取 izuko-tv (默认 GitHub 上的; 本地验证还没推上去的改动时可以指向本地仓库)
-#   FORCE      true = 导出与判据版本都没变也重出
+#   FORCE      true = 导出与判据版本都没变也重出 (两张表都重出)
 #   JAVA_HOME  带 JCEF 的 JBR 21 (izuko-tv 的构建要 JetBrains 厂商, 桌面端代码要 JCEF 的类); 用 jdk 步骤装的就不用设
 set -euo pipefail
 
@@ -28,6 +30,7 @@ mkdir -p "$WORK"
 IZUKO_REF=${IZUKO_REF:-main}
 IZUKO_REPO=${IZUKO_REPO:-https://github.com/GrahamZen/izuko-tv.git}
 TABLE="$ROOT/bgm-sequel-seasons.tsv"
+GRAPH="$ROOT/bgm-series-graph.tsv"
 RULES_FILE=app/shared/app-data/src/commonMain/kotlin/data/recommendation/SequelSeasons.kt
 
 JBR_FILE=jbrsdk_jcef-21.0.11-linux-x64-b1163.116.tar.gz
@@ -37,8 +40,11 @@ JBR_DIR=${JBR_DIR:-$HOME/jbr/${JBR_FILE%.tar.gz}}
 gh_output() { echo "$1"; if [ -n "${GITHUB_OUTPUT:-}" ]; then echo "$1" >> "$GITHUB_OUTPUT"; fi; }
 gh_env() { if [ -n "${GITHUB_ENV:-}" ]; then echo "$1" >> "$GITHUB_ENV"; fi; }
 
-# 表头里的某一项 (rules / dump / max_id); 没有表时为空
-header_field() { [ -f "$TABLE" ] && head -1 "$TABLE" | grep -oE "(^| )$1=[^ ]+" | head -1 | cut -d= -f2 || true; }
+# 表头里的某一项 (rules / dump / max_id); 没有表时为空. 第二个参数是哪张表, 默认续作候选季表
+header_field() {
+  local file=${2:-$TABLE}
+  [ -f "$file" ] && head -1 "$file" | grep -oE "(^| )$1=[^ ]+" | head -1 | cut -d= -f2 || true
+}
 
 step_plan() {
   curl -fsSL https://raw.githubusercontent.com/bangumi/Archive/master/aux/latest.json -o "$WORK/latest.json"
@@ -54,6 +60,12 @@ step_plan() {
     due=1
   fi
   gh_output "due=$due"
+  local due_graph=0
+  echo "系列关系图的导出: $(header_field dump "$GRAPH")"
+  if [ "${FORCE:-}" = "true" ] || [ "$(header_field dump "$GRAPH")" != "$dump" ]; then
+    due_graph=1
+  fi
+  gh_output "due_graph=$due_graph"
 }
 
 step_download() {
@@ -73,6 +85,12 @@ step_download() {
 
 step_prepare() {
   python3 "$ROOT/scripts/prepare.py" --dump "$WORK/dump.zip" --work "$WORK"
+}
+
+step_graph() {
+  python3 "$ROOT/scripts/graph.py" --work "$WORK" --out "$GRAPH"
+  echo "系列关系图 $(($(wc -l < "$GRAPH") - 1)) 部 ($(header_field dump "$GRAPH"))" > "$WORK/graph-summary.txt"
+  cat "$WORK/graph-summary.txt"
 }
 
 step_izuko() {
@@ -124,8 +142,8 @@ step_build() {
 [ $# -gt 0 ] || { sed -n '2,24p' "$0"; exit 2; }
 for s in "$@"; do
   case "$s" in
-    plan | download | prepare | izuko | jdk | build) echo "== $s"; "step_$s" ;;
-    local) for t in download prepare izuko jdk build; do echo "== $t"; "step_$t"; done ;;
+    plan | download | prepare | graph | izuko | jdk | build) echo "== $s"; "step_$s" ;;
+    local) for t in download prepare graph izuko jdk build; do echo "== $t"; "step_$t"; done ;;
     *) echo "未知步骤: $s" >&2; exit 2 ;;
   esac
 done
