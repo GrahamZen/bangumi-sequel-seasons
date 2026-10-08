@@ -76,7 +76,9 @@ jobs:
           if git diff --cached --quiet; then echo "没有变化"; exit 0; fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          summary=$(cat "$RUNNER_TEMP/work/summary.txt" "$RUNNER_TEMP/work/graph-summary.txt" 2>/dev/null | paste -sd ';' -)
+          # 两张表不一定都重出了, 少了哪份说明就不写
+          # 两张表不一定都重出了, 少了哪份说明就不写
+          summary=$( (cat "$RUNNER_TEMP/work/summary.txt" "$RUNNER_TEMP/work/graph-summary.txt" 2>/dev/null || true) | paste -sd ';' -)
           git commit -q -m "update $(date -u +%F): $summary"
           git push
           # jsDelivr 按分支缓存, 推完主动刷新
