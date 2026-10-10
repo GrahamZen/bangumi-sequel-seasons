@@ -3,7 +3,9 @@
 客户端拿它代替一跳一个请求的 `/p1/subjects/{id}/relations`: 系列索引、续作换季、TMDB 找系列主条目、数据源搜索的系列名
 都在本地照同一套走法算. 字段与客户端从接口构造的节点 (SeriesNode) 逐项对应, 口径同 runner/BgmSequelSeasonsRunner.kt:
 - 关联只看动画, 按 (order, id) 排好后取前 RELATIONS_PAGE_SIZE 条 (= 接口一页), 其中关系类型 2 是前传、3 是续集;
-- 首播日、本篇集数、nsfw 取自导出; 类型只存条目官方标签里第一个属于 CATEGORY 的 (客户端判断「是不是一季」只看这一个).
+- 首播日、本篇集数、nsfw 取自导出; 类型只存条目官方标签里第一个属于 CATEGORY 的 (客户端判断「是不是一季」只看这一个);
+- 最后两列 (本篇第一集的 sort、本篇中间的特别篇数) 供客户端识别拆分季 (一季拆成的几个条目), 是默认值 (1 / 0) 时留空.
+  新加的列都放在最后: 旧版客户端按位置读前面的列, 多出来的不看.
 
 收录: 有前传或续集的动画, 以及被它们指到的 (名字与字段要从这一行取). 表覆盖到 (id 不超过 max_id) 却不在表里 = 没有前传与续集.
 """
@@ -66,11 +68,14 @@ def main():
             "1" if a.get("nsfw") else "",
             ",".join(map(str, pre)),
             ",".join(map(str, seq)),
+            str(a["firstSort"]) if a.get("eps") and a.get("firstSort") not in (None, 1) else "",
+            str(a["inlineSpecials"]) if a.get("inlineSpecials") else "",
         ]))
 
     dump = open(f"{args.work}/dump.name", encoding="utf-8").read().strip() or "unknown"
     header = (f"# bangumi-series-graph v1 max_id={max(anime)} dump={dump}"
-              " | 列: bgm_id, 原名, 中文名, 首播日, 本篇集数, 类型, nsfw, 前传, 续集 (逗号分隔的 bgm id)."
+              " | 列: bgm_id, 原名, 中文名, 首播日, 本篇集数, 类型, nsfw, 前传, 续集 (逗号分隔的 bgm id),"
+              " 本篇第一集 sort (空 = 1), 本篇中间的特别篇数 (空 = 0)."
               " 收有前传或续集的动画与它们指到的; 表覆盖到 (id 不超过 max_id) 却不在表里 = 没有前传与续集. 说明见 README.")
     with open(args.out, "w", encoding="utf-8", newline="\n") as f:
         f.write("\n".join([header] + rows) + "\n")
