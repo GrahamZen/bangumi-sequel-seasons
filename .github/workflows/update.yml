@@ -1,5 +1,6 @@
 # 每天看一眼: Bangumi 导出换了, 或 izuko-tv 的续作判据版本变了, 就重出续作候选季表并提交回本仓库;
 # 导出换了也重出系列关系图 (纯 Python, 不构建 izuko-tv). 都没变时只跑 plan (取两个小文件, 几秒钟), 不下导出也不构建.
+# 推荐目录 (rec/) 每天都出: 近期分片每天、主目录每周, 只问 bangumi 搜索接口 (见 scripts/rec.py).
 # 各步骤的逻辑在 scripts/ci.sh (本地用 `scripts/ci.sh local` 跑同一套); 这里只另外存取缓存与提交.
 name: update
 
@@ -84,6 +85,22 @@ jobs:
           for f in bgm-sequel-seasons.tsv bgm-series-graph.tsv; do
             curl -fsS "https://purge.jsdelivr.net/gh/${GITHUB_REPOSITORY}@main/$f" > /dev/null || true
           done
+
+      # 推荐目录每天都跑 (近期分片每天重出, 主目录满一周整份重出), 与上面两张表无关; 失败不影响上面已提交的
+      - name: Recommendation catalog
+        run: scripts/ci.sh rec
+
+      - name: Commit recommendation catalog
+        run: |
+          set -euo pipefail
+          git add -A rec
+          if git diff --cached --quiet; then echo "没有变化"; exit 0; fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -q -m "rec $(date -u +%F): $(cat "$RUNNER_TEMP/work/rec-summary.txt")"
+          git push
+          # 文件名带内容摘要, 只有清单要刷新 jsDelivr 的分支缓存
+          curl -fsS "https://purge.jsdelivr.net/gh/${GITHUB_REPOSITORY}@main/rec/manifest.json" > /dev/null || true
 
       # 一个 izuko-tv 版本只存一份 (一份 1 GB 多, 仓库缓存共 10 GB): 开头按这个版本精确恢复到了就不再存;
       # 换了版本从最近那份接着编, 编完存成新版本的. 失败的那一轮也存: 下载的依赖与编译产物照样有用, 不然每次重试都是冷构建

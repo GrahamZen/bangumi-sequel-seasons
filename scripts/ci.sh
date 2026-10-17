@@ -13,6 +13,7 @@
 #   jdk       装带 JCEF 的 JBR (版本写死在下面, 从 JetBrains 的 CDN 取并校验, 不经 GitHub API); 已装就跳过
 #   build     构建并运行出表器, 写 bgm-sequel-seasons.tsv
 #   local     本地验证: download prepare graph izuko jdk build 依次跑 (不看 plan), 不提交
+#   rec       推荐目录 (scripts/rec.py): 主目录满 7 天 (或还没有) 整份重出, 否则只重出近期分片. 只用 bangumi 搜索接口, 不下导出
 #
 # 环境变量:
 #   WORK       工作目录; 默认 $RUNNER_TEMP/work, 本地为仓库下的 .work
@@ -139,10 +140,23 @@ step_build() {
   cat "$WORK/summary.txt"
 }
 
-[ $# -gt 0 ] || { sed -n '2,24p' "$0"; exit 2; }
+step_rec() {
+  local manifest="$ROOT/rec/manifest.json" age=999
+  if [ -f "$manifest" ]; then
+    age=$(python3 -c 'import json,sys,datetime; d=json.load(open(sys.argv[1]))["catalog"]["date"]; print((datetime.date.today()-datetime.date.fromisoformat(d)).days)' "$manifest")
+  fi
+  if [ "${FORCE:-}" = "true" ] || [ "$age" -ge 7 ]; then
+    python3 "$ROOT/scripts/rec.py" catalog --repo "$ROOT" > "$WORK/rec-summary.txt"
+  else
+    python3 "$ROOT/scripts/rec.py" recent --repo "$ROOT" > "$WORK/rec-summary.txt"
+  fi
+  cat "$WORK/rec-summary.txt"
+}
+
+[ $# -gt 0 ] || { sed -n '2,25p' "$0"; exit 2; }
 for s in "$@"; do
   case "$s" in
-    plan | download | prepare | graph | izuko | jdk | build) echo "== $s"; "step_$s" ;;
+    plan | download | prepare | graph | izuko | jdk | build | rec) echo "== $s"; "step_$s" ;;
     local) for t in download prepare graph izuko jdk build; do echo "== $t"; "step_$t"; done ;;
     *) echo "未知步骤: $s" >&2; exit 2 ;;
   esac
