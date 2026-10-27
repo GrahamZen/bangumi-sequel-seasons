@@ -4,7 +4,7 @@ Bangumi 动画「续作 → 可以换成的那几季」对照表。[Izuko TV](ht
 
 每天由 GitHub Actions 检查一次，Bangumi 数据导出（每周一次）或客户端的判据变了才重新生成。
 
-另出一张**系列关系图** `bgm-series-graph.tsv`（见下文）：新版客户端只用它，续作换季、系列索引、TMDB 找系列主条目、数据源搜索的系列名都在设备上照同一套走法算；`bgm-sequel-seasons.tsv` 继续给旧版客户端出。
+另出一张**系列关系图** `bgm-series-graph.tsv`（见下文）：续作换季、系列索引、TMDB 找系列主条目、数据源搜索的系列名都在设备上照同一套走法算；再出一张**全部动画的名字表** `bgm-anime.tsv`：列同系列关系图、收全部动画、多一列别名，新版客户端优先用它（数据源认搜到的标题、文件夹是不是别的作品），取不到时退到系列关系图。`bgm-sequel-seasons.tsv` 与 `bgm-series-graph.tsv` 继续给旧版客户端出。
 
 ## 取用
 
@@ -62,6 +62,18 @@ https://raw.githubusercontent.com/GrahamZen/bangumi-sequel-seasons/main/bgm-seri
 - 新列只加在最后：旧版客户端按位置读前面的列，多出来的不看。
 - 只存原始关系，不存算好的结果：客户端的判据改了不用重出，导出换了才重出（`scripts/graph.py`，不构建 izuko-tv）。
 
+## 全部动画的名字表 `bgm-anime.tsv`
+
+```
+https://cdn.jsdelivr.net/gh/GrahamZen/bangumi-sequel-seasons@main/bgm-anime.tsv
+https://raw.githubusercontent.com/GrahamZen/bangumi-sequel-seasons/main/bgm-anime.tsv
+```
+
+表头 `# bangumi-anime v1 max_id=… dump=…`，其后每行一部动画（三万多行，三 MB 出头，gzip 后一点五 MB 左右）。前 11 列与系列关系图相同（前传 / 续集两列照样只有有关系的才非空），第 12 列是别名：infobox 里的中文名、别名、英文名、日文名，`|` 分隔（名字里的 `|` 换成全角）。
+
+- 客户端拿它认一段名字（搜到的条目名、分享标题、文件夹名）是不是认得的别的作品：拆出的作品名与表里某部动画的名字（原名、中文名、别名）相等才算。
+- 与系列关系图同一次出（`scripts/graph.py --anime-out`），导出换了才重出。
+
 ## 推荐目录 `rec/`
 
 客户端探索页「推荐」按排名 / 热度搜候选的那几种查询 (口味高分、种子补齐、高分经典、换换口味、本季、大家最近在看、没收藏时的两条榜) 与「看过的人还看了」，在本地按 bangumi 搜索同样的条件、排序、翻页答出来，不再一条条问 bangumi。客户端答不了 (目录没下下来、过期、超出收录范围、查询的标签不在字典里) 时照旧问 bangumi。
@@ -88,9 +100,10 @@ https://raw.githubusercontent.com/GrahamZen/bangumi-sequel-seasons/main/bgm-seri
 ```
 bgm-sequel-seasons.tsv  对照表 (旧版客户端用)
 bgm-series-graph.tsv    系列关系图
+bgm-anime.tsv           全部动画的名字表
 rec/                    推荐目录 (scripts/rec.py, 用 bangumi 搜索接口生成)
 runner/                 出表器入口; 工作流把它拷进 izuko-tv 的测试源码里运行
-scripts/                ci.sh 全部步骤 (工作流与本地共用), prepare.py 从导出取出出表器的输入, graph.py 写系列关系图, rec.py 写推荐目录
+scripts/                ci.sh 全部步骤 (工作流与本地共用), prepare.py 从导出取出出表器的输入, graph.py 写系列关系图与名字表, rec.py 写推荐目录
 .github/workflows/      update 每日检查与更新
 ```
 
@@ -103,7 +116,7 @@ scripts/ci.sh plan     # 看要不要重出
 scripts/ci.sh local    # 下载导出 → 取输入 → 系列关系图 → 取 izuko-tv → 装 JBR → 出表, 不提交
 ```
 
-结果写在仓库下的 `.work/`、`bgm-sequel-seasons.tsv` 与 `bgm-series-graph.tsv` 里，看完用 `git checkout -- bgm-sequel-seasons.tsv bgm-series-graph.tsv` 丢掉。
+结果写在仓库下的 `.work/`、`bgm-sequel-seasons.tsv`、`bgm-series-graph.tsv` 与 `bgm-anime.tsv` 里，看完用 `git checkout -- bgm-sequel-seasons.tsv bgm-series-graph.tsv bgm-anime.tsv` 丢掉。
 
 ## 数据来源与署名
 

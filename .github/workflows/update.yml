@@ -73,7 +73,7 @@ jobs:
         if: steps.plan.outputs.due == '1' || steps.plan.outputs.due_graph == '1'
         run: |
           set -euo pipefail
-          git add bgm-sequel-seasons.tsv bgm-series-graph.tsv
+          git add bgm-sequel-seasons.tsv bgm-series-graph.tsv bgm-anime.tsv
           if git diff --cached --quiet; then echo "没有变化"; exit 0; fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
@@ -82,7 +82,7 @@ jobs:
           git commit -q -m "update $(date -u +%F): $summary"
           git push
           # jsDelivr 按分支缓存, 推完主动刷新
-          for f in bgm-sequel-seasons.tsv bgm-series-graph.tsv; do
+          for f in bgm-sequel-seasons.tsv bgm-series-graph.tsv bgm-anime.tsv; do
             curl -fsS "https://purge.jsdelivr.net/gh/${GITHUB_REPOSITORY}@main/$f" > /dev/null || true
           done
 

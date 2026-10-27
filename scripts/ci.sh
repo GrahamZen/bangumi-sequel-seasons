@@ -8,7 +8,7 @@
 #             只取两个小文件 (导出的 latest.json 与 izuko-tv 的 SequelSeasons.kt), 不下导出、不构建
 #   download  取 Bangumi 最新导出 (同名的已下载过就跳过)
 #   prepare   从导出取出出表器的输入 (scripts/prepare.py)
-#   graph     写系列关系图 bgm-series-graph.tsv (scripts/graph.py, 不用 izuko-tv)
+#   graph     写系列关系图 bgm-series-graph.tsv 与全部动画的名字表 bgm-anime.tsv (scripts/graph.py, 不用 izuko-tv)
 #   izuko     取 izuko-tv (IZUKO_REF), 拷入出表器
 #   jdk       装带 JCEF 的 JBR (版本写死在下面, 从 JetBrains 的 CDN 取并校验, 不经 GitHub API); 已装就跳过
 #   build     构建并运行出表器, 写 bgm-sequel-seasons.tsv
@@ -32,6 +32,7 @@ IZUKO_REF=${IZUKO_REF:-main}
 IZUKO_REPO=${IZUKO_REPO:-https://github.com/GrahamZen/izuko-tv.git}
 TABLE="$ROOT/bgm-sequel-seasons.tsv"
 GRAPH="$ROOT/bgm-series-graph.tsv"
+ANIME="$ROOT/bgm-anime.tsv"
 RULES_FILE=app/shared/app-data/src/commonMain/kotlin/data/recommendation/SequelSeasons.kt
 
 JBR_FILE=jbrsdk_jcef-21.0.11-linux-x64-b1163.116.tar.gz
@@ -89,8 +90,8 @@ step_prepare() {
 }
 
 step_graph() {
-  python3 "$ROOT/scripts/graph.py" --work "$WORK" --out "$GRAPH"
-  echo "系列关系图 $(($(wc -l < "$GRAPH") - 1)) 部 ($(header_field dump "$GRAPH"))" > "$WORK/graph-summary.txt"
+  python3 "$ROOT/scripts/graph.py" --work "$WORK" --out "$GRAPH" --anime-out "$ANIME"
+  echo "系列关系图 $(($(wc -l < "$GRAPH") - 1)) 部, 名字表 $(($(wc -l < "$ANIME") - 1)) 部 ($(header_field dump "$GRAPH"))" > "$WORK/graph-summary.txt"
   cat "$WORK/graph-summary.txt"
 }
 

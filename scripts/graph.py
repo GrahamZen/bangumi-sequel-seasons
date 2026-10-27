@@ -8,6 +8,9 @@
   新加的列都放在最后: 旧版客户端按位置读前面的列, 多出来的不看.
 
 收录: 有前传或续集的动画, 以及被它们指到的 (名字与字段要从这一行取). 表覆盖到 (id 不超过 max_id) 却不在表里 = 没有前传与续集.
+
+--anime-out 另出 bgm-anime.tsv: 全部动画, 列同上, 最后加一列别名 (infobox 里的中文名、别名、英文名、日文名, `|` 分隔).
+客户端拿它认搜到的标题、文件夹是不是别的作品 (名字表), 系列关系照样从前传 / 续集两列走.
 """
 import argparse
 import json
@@ -26,6 +29,7 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--work", required=True)
     ap.add_argument("--out", required=True)
+    ap.add_argument("--anime-out", help="另出全部动画的名字表 (bgm-anime.tsv)")
     args = ap.parse_args()
 
     anime = {}
@@ -53,12 +57,11 @@ def main():
         members.update(pre)
         members.update(seq)
 
-    rows = []
-    for i in sorted(members):
+    def columns(i):
         a = anime[i]
         category = next((t for t in a.get("meta") or [] if t in CATEGORY), "")
         pre, seq = edges.get(i, ([], []))
-        rows.append("\t".join([
+        return [
             str(i),
             clean(a.get("name")),
             clean(a.get("nameCN")),
@@ -70,7 +73,9 @@ def main():
             ",".join(map(str, seq)),
             str(a["firstSort"]) if a.get("eps") and a.get("firstSort") not in (None, 1) else "",
             str(a["inlineSpecials"]) if a.get("inlineSpecials") else "",
-        ]))
+        ]
+
+    rows = ["\t".join(columns(i)) for i in sorted(members)]
 
     dump = open(f"{args.work}/dump.name", encoding="utf-8").read().strip() or "unknown"
     header = (f"# bangumi-series-graph v1 max_id={max(anime)} dump={dump}"
@@ -80,6 +85,20 @@ def main():
     with open(args.out, "w", encoding="utf-8", newline="\n") as f:
         f.write("\n".join([header] + rows) + "\n")
     print(f"系列关系图: {len(anime)} 部动画里 {len(rows)} 部 (有关系的 {len(edges)}) -> {args.out}")
+
+    if args.anime_out:
+        def aliases(i):
+            # 名字里的 | 换成全角, 列内的分隔符只有 |
+            return "|".join(clean(n).replace("|", "｜") for n in anime[i].get("aliases") or [] if clean(n))
+
+        all_rows = ["\t".join(columns(i) + [aliases(i)]) for i in sorted(anime)]
+        all_header = (f"# bangumi-anime v1 max_id={max(anime)} dump={dump}"
+                      " | 列: bgm_id, 原名, 中文名, 首播日, 本篇集数, 类型, nsfw, 前传, 续集 (逗号分隔的 bgm id),"
+                      " 本篇第一集 sort (空 = 1), 本篇中间的特别篇数 (空 = 0), 别名 (| 分隔)."
+                      " 收全部动画; 前传续集同 bgm-series-graph.tsv. 说明见 README.")
+        with open(args.anime_out, "w", encoding="utf-8", newline="\n") as f:
+            f.write("\n".join([all_header] + all_rows) + "\n")
+        print(f"名字表: {len(all_rows)} 部动画 -> {args.anime_out}")
 
 
 main()
