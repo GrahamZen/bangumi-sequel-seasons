@@ -1,6 +1,6 @@
 {
  "format": 1,
- "generated": "2026-11-14T02:57:06Z",
+ "generated": "2026-11-15T02:27:48Z",
  "tags": [
   "3D",
   "BL",
@@ -186,16 +186,16 @@
   "gzip": 86705
  },
  "recent": {
-  "path": "rec/recent.7fe078b9d2.tsv",
+  "path": "rec/recent.236fd6532f.tsv",
   "rows": 320,
-  "sha256": "7fe078b9d25bbee30dc2bccf485584fb884dd0f22fda9f47afbcc03c36e9a2f9",
-  "bytes": 66851,
-  "gzip": 31407
+  "sha256": "236fd6532f274f5365d821fe0489cb1c3da616119f30abae4474243fd28a7425",
+  "bytes": 66836,
+  "gzip": 31392
  },
  "recent_scope": {
   "since": "2026-04-01",
-  "min_collection": 155,
-  "date": "2026-11-14"
+  "min_collection": 156,
+  "date": "2026-11-15"
  },
  "recs": [
   {
