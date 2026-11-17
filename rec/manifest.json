@@ -1,6 +1,6 @@
 {
  "format": 1,
- "generated": "2026-11-16T02:37:47Z",
+ "generated": "2026-11-17T05:00:46Z",
  "tags": [
   "3D",
   "BL",
@@ -119,56 +119,56 @@
   "龙傲天"
  ],
  "tag_confidence": 0.15,
- "names_from_graph": "dump-2026-11-03.210402Z.zip",
+ "names_from_graph": "dump-2026-11-10.210405Z.zip",
  "catalog": {
-  "date": "2026-11-10",
-  "rows": 3067,
+  "date": "2026-11-17",
+  "rows": 3070,
   "min_votes": 1000,
-  "classics_before": "2026-05-14",
+  "classics_before": "2026-05-21",
   "classics_depth": 100
  },
  "static": [
   {
-   "path": "rec/static-0.a6c6acca16.tsv",
-   "rows": 1274,
-   "sha256": "a6c6acca16b716511bc3c0dd4c508e2ebb3302fa94cf70fa4c9faa367f5cda2b",
-   "bytes": 117952,
-   "gzip": 46959
+   "path": "rec/static-0.82eb990d4f.tsv",
+   "rows": 1275,
+   "sha256": "82eb990d4fbd244d5d0085f69d1eea50c9c7e2b3347e88f122267aedce785a94",
+   "bytes": 118027,
+   "gzip": 46971
   },
   {
-   "path": "rec/static-1.d028c08453.tsv",
-   "rows": 437,
-   "sha256": "d028c084538aefad65e1fe45a242d66af960d26f9134b2dba11a3712dd346607",
-   "bytes": 43130,
-   "gzip": 17388
+   "path": "rec/static-1.41173645e5.tsv",
+   "rows": 438,
+   "sha256": "41173645e501a14718b5b04f20e8bd21fe1933dd2658c4d023976b61e7a528d8",
+   "bytes": 43196,
+   "gzip": 17413
   },
   {
-   "path": "rec/static-2.322fc1e493.tsv",
+   "path": "rec/static-2.59ad50a15d.tsv",
    "rows": 506,
-   "sha256": "322fc1e493926fd1fa46e712fe5644a4b2df67b801f95d160d03675e7710bd97",
+   "sha256": "59ad50a15d12865a2639abcecddaba785126a987ba29b0c5e7aa8e1fa99e0afc",
    "bytes": 51178,
-   "gzip": 20393
+   "gzip": 20387
   },
   {
-   "path": "rec/static-3.6086bec705.tsv",
-   "rows": 410,
-   "sha256": "6086bec70513a8af56d13a044e6d8342c3c7e92382311af2bd1a929126bbaf11",
-   "bytes": 42686,
-   "gzip": 17185
+   "path": "rec/static-3.90aa617bf0.tsv",
+   "rows": 411,
+   "sha256": "90aa617bf0a8c59e095d69191d166796ac0d51cd23ec7e46224b69c146c31821",
+   "bytes": 42813,
+   "gzip": 17238
   },
   {
-   "path": "rec/static-4.50d81635f9.tsv",
+   "path": "rec/static-4.7ab81a26d9.tsv",
    "rows": 260,
-   "sha256": "50d81635f9b33b8444a2921d10f1a2bced1cea9d99c78b373692c05309dd8089",
-   "bytes": 28643,
-   "gzip": 12217
+   "sha256": "7ab81a26d926bafa9a884630959fa20a6e6bf2afd4384e413830b17ab7d5948f",
+   "bytes": 28657,
+   "gzip": 12199
   },
   {
-   "path": "rec/static-5.6a46690b06.tsv",
+   "path": "rec/static-5.46b843f92e.tsv",
    "rows": 160,
-   "sha256": "6a46690b061a245bb430a18c5b576a49bdc68b450dc63199fbdcc7de4815a6c1",
-   "bytes": 20363,
-   "gzip": 9338
+   "sha256": "46b843f92ef848addc7e0013fd0948e2fcb752d433c04f95e96023c7db7ff407",
+   "bytes": 20225,
+   "gzip": 9280
   },
   {
    "path": "rec/static-6.8c08dfda31.tsv",
@@ -179,38 +179,38 @@
   }
  ],
  "stats": {
-  "path": "rec/stats.8f2c742489.tsv",
-  "rows": 3067,
-  "sha256": "8f2c742489414bcd304ec29f0f30f70bcfa4a0f0bedb65947f84a461e5e4844d",
-  "bytes": 215936,
-  "gzip": 86705
+  "path": "rec/stats.709b53c4f4.tsv",
+  "rows": 3070,
+  "sha256": "709b53c4f4129e403ee3e48b6a93329789c89b8e9a058cf54cb7bdb71bb6ab54",
+  "bytes": 216240,
+  "gzip": 86779
  },
  "recent": {
-  "path": "rec/recent.1973b7b9b3.tsv",
+  "path": "rec/recent.30ab5ea3f7.tsv",
   "rows": 320,
-  "sha256": "1973b7b9b3c01f2d559447c443546d826ca01771911806c9f35d0984acc1256b",
-  "bytes": 66821,
-  "gzip": 31407
+  "sha256": "30ab5ea3f71da3cc98ea9a4936ab6b2409edb63a2953d33b73f0a547f095b723",
+  "bytes": 66807,
+  "gzip": 31384
  },
  "recent_scope": {
   "since": "2026-04-01",
-  "min_collection": 157,
-  "date": "2026-11-16"
+  "min_collection": 158,
+  "date": "2026-11-17"
  },
  "recs": [
   {
-   "path": "rec/recs-0.b58a3388be.tsv",
-   "rows": 1274,
-   "sha256": "b58a3388beb39fff177716ffb9d643a20d8a909391c6d0d60f9df56a64c189ad",
-   "bytes": 50756,
-   "gzip": 21794
+   "path": "rec/recs-0.7f98e9d53e.tsv",
+   "rows": 1275,
+   "sha256": "7f98e9d53e44fc09b34bd9a2c96ac9aae4f13fa6e9d7591a5f924ab94dc01925",
+   "bytes": 50819,
+   "gzip": 21817
   },
   {
-   "path": "rec/recs-1.f2332980ca.tsv",
-   "rows": 437,
-   "sha256": "f2332980ca6fdbce70b85d3562304fd02b0129de203f9aa6d448408a94e9ca20",
-   "bytes": 23406,
-   "gzip": 9956
+   "path": "rec/recs-1.5d4536531d.tsv",
+   "rows": 438,
+   "sha256": "5d4536531dba6a5cc89c594ed64b58334d803ca1b5d5d21ef1b6b7cee47ba8ce",
+   "bytes": 23448,
+   "gzip": 9971
   },
   {
    "path": "rec/recs-2.f40fc9e7a1.tsv",
@@ -220,24 +220,24 @@
    "gzip": 11218
   },
   {
-   "path": "rec/recs-3.59af047a50.tsv",
-   "rows": 413,
-   "sha256": "59af047a502b4c8f4fbaff8adf98b7f0df4c3490ff6179ff03234ca62ee29e7b",
-   "bytes": 17609,
-   "gzip": 7285
+   "path": "rec/recs-3.a8ef9362fc.tsv",
+   "rows": 414,
+   "sha256": "a8ef9362fc11f7e0a73c82bb2a747559ba33be77ba2924c114ee2dd7e3cef988",
+   "bytes": 17617,
+   "gzip": 7288
   },
   {
-   "path": "rec/recs-4.40da84e2db.tsv",
-   "rows": 288,
-   "sha256": "40da84e2db35143ab39097f1afb4e4913bd6371d2af487df5a8ffadb5df19865",
-   "bytes": 2599,
-   "gzip": 1119
+   "path": "rec/recs-4.5d99696140.tsv",
+   "rows": 289,
+   "sha256": "5d99696140fbc4e9c25410b253575517adef352f54ea46eabecb82cca99d613a",
+   "bytes": 2607,
+   "gzip": 1121
   },
   {
-   "path": "rec/recs-5.27a9ad6e3e.tsv",
-   "rows": 262,
-   "sha256": "27a9ad6e3efe9677b98b20c4bd8e45a74637f07128a22eca52144bb670ef47bc",
-   "bytes": 2186,
+   "path": "rec/recs-5.8804bad90f.tsv",
+   "rows": 261,
+   "sha256": "8804bad90f901fe4016de37acaabf89ace57744164d9eb59a991a69364a42890",
+   "bytes": 2178,
    "gzip": 922
   },
   {
